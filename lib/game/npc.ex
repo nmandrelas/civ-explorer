@@ -8,11 +8,6 @@ defmodule Game.NPC do
 
   def random_move(npc) do
     direction = Enum.random(@directions)
-    move(npc, direction)
+    Game.Movement.move(npc, direction)
   end
-
-  defp move(npc, :up), do: %{npc | y: npc.y - 1}
-  defp move(npc, :down), do: %{npc | y: npc.y + 1}
-  defp move(npc, :left), do: %{npc | x: npc.x - 1}
-  defp move(npc, :right), do: %{npc | x: npc.x + 1}
 end

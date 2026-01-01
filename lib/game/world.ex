@@ -26,8 +26,8 @@ defmodule Game.World do
 
   def move_player(world, player_id, direction) do
     player = Enum.find(world.players, fn p -> p.id == player_id end)
-    player = %{player | x: player.x - 1}
-    %Game.World{npcs: world.npcs, players: []}
+    player = Game.Movement.move(player, direction)
+    %Game.World{npcs: world.npcs, players: [player]}
   end
 
   def tick(world) do
