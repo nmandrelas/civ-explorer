@@ -2,7 +2,7 @@ defmodule Game.NPC do
   @moduledoc """
     A simple NPC that can move randomly to the grid
   """
-  defstruct [:x, :y, :race]
+  defstruct [:x, :y, :race, :symbol]
 
   @directions [:up, :down, :left, :right]
 
