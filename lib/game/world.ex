@@ -54,4 +54,3 @@ defmodule Game.World do
     |> min(max)
   end
 end
-
