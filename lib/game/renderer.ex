@@ -2,6 +2,8 @@ defmodule Game.Renderer do
   @moduledoc """
   Renders the world as ASCII
   """
+  alias Game.NPC
+
   @width 16
   @height 16
 
@@ -18,7 +20,7 @@ defmodule Game.Renderer do
       end
       |> Enum.join(".")
     end
-    |> Enum.join("\n")
+    |> Enum.join("\r\n")
   end
 
   defp npc_at?(npcs, x, y) do
