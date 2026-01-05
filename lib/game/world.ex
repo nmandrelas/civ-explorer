@@ -5,9 +5,7 @@ defmodule Game.World do
 
   alias Game.NPC
   alias Game.Player
-  @width 16
-  @height 16
-
+  alias Configs.Static
   defstruct npcs: [], players: []
 
   def new do
@@ -43,8 +41,8 @@ defmodule Game.World do
   defp clamp(%NPC{x: x, y: y} = npc) do
     %NPC{
       npc
-      | x: clamp_value(x, 0, @width - 1),
-        y: clamp_value(y, 0, @height - 1)
+      | x: clamp_value(x, 0, Static.width() - 1),
+        y: clamp_value(y, 0, Static.height() - 1)
     }
   end
 
@@ -54,4 +52,3 @@ defmodule Game.World do
     |> min(max)
   end
 end
-

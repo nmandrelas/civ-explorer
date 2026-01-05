@@ -2,14 +2,13 @@ defmodule Game.Renderer do
   @moduledoc """
   Renders the world as ASCII
   """
-  @width 16
-  @height 16
+  alias Configs.Static
 
   def render(world) do
     renderables = world.players ++ world.npcs
 
-    for y <- 0..(@height - 1) do
-      for x <- 0..(@width - 1) do
+    for y <- 0..(Static.height() - 1) do
+      for x <- 0..(Static.width() - 1) do
         if npc_at?(renderables, x, y) do
           get_symbol(renderables, x, y)
         else
@@ -18,7 +17,7 @@ defmodule Game.Renderer do
       end
       |> Enum.join(".")
     end
-    |> Enum.join("\n")
+    |> Enum.join("\r\n")
   end
 
   defp npc_at?(npcs, x, y) do
