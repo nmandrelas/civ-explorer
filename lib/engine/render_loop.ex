@@ -17,10 +17,6 @@ defmodule Engine.RenderLoop do
         IO.write(Renderer.render(world))
     end
 
-    Process.send_after(self(), :next, @frame_ms)
-
-    receive do
-      :next -> loop(game_pid)
-    end
+    loop(game_pid)
   end
 end
