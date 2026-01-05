@@ -1,22 +1,19 @@
 defmodule Engine.RenderLoop do
   alias Game.Renderer
 
-  @fps 30
-  @frame_ms div(1000, @fps)
-
-  def start(game_pid) do
-    spawn_link(fn -> loop(game_pid) end)
+  def start do
+    spawn_link(fn ->
+      loop()
+    end)
   end
 
-  defp loop(game_pid) do
-    send(game_pid, {:render, self()})
-
+  defp loop do
     receive do
       {:world, world} ->
         IO.write("\e[2J\e[1;1H")
         IO.write(Renderer.render(world))
     end
 
-    loop(game_pid)
+    loop()
   end
 end
