@@ -1,28 +1,35 @@
-defmodule Engine.Game do
+defmodule GameServer do
   alias Game.World
 
-  def start(world, renderer_pid) do
-    spawn_link(fn -> loop(world, renderer_pid) end)
+  def start do
+    spawn_link(fn -> loop(World.new(), %{}) end)
   end
 
-  defp loop(world, renderer_pid) do
+  defp loop(world, clients) do
     receive do
-      {:move, dir} ->
-        new_world = World.move_player(world, 1, dir)
-        notify(renderer_pid, new_world)
-        loop(new_world, renderer_pid)
+      {:join, client_pid} ->
+        id = make_ref()
+        world = World.add_player(world, id)
+        clients = Map.put(clients, id, client_pid)
+        send(client_pid, {:welcome, id, world})
+        broadcast(world, clients)
+        loop(world, clients)
 
-      :tick ->
-        new_world = World.tick(world)
-        notify(renderer_pid, new_world)
-        loop(new_world, renderer_pid)
+      {:input, id, {:move, dir}} ->
+        IO.inspect(dir)
+        world = World.move_player(world, id, dir)
+        broadcast(world, clients)
+        loop(world, clients)
 
-      {:exit} ->
-        exit(:normal)
+      {:disconnect, id} ->
+        clients = Map.delete(clients, id)
+        loop(world, clients)
     end
   end
 
-  defp notify(renderer_pid, world) do
-    send(renderer_pid, {:world, world})
+  defp broadcast(world, clients) do
+    Enum.each(clients, fn {_id, pid} ->
+      send(pid, {:world, world})
+    end)
   end
 end
