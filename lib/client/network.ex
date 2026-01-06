@@ -4,18 +4,19 @@ defmodule Client.Network do
   end
 
   defp loop(socket) do
-    case :gen_tcp.recv(socket, 0) do
-      {:ok, data} ->
+    receive do
+      {:tcp, ^socket, data} ->
         world = :erlang.binary_to_term(data)
         Client.Renderer.render(world)
-        # <- MUST recurse
         loop(socket)
 
-      {:error, :closed} ->
+      {:tcp_closed, ^socket} ->
         IO.puts("Server closed connection")
+        System.stop(0)
 
-      {:error, reason} ->
+      {:tcp_error, ^socket, reason} ->
         IO.puts("TCP error: #{inspect(reason)}")
+        System.stop(0)
     end
   end
 end

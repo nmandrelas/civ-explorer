@@ -23,8 +23,7 @@ defmodule Server.ClientSession do
   defp active(socket, game, id) do
     case :gen_tcp.recv(socket, 0) do
       {:ok, data} ->
-        IO.inspect(data)
-
+        # data is now the exact message (e.g. "w\n" or "s\n")
         case String.trim(data) do
           "w" -> send(game, {:input, id, {:move, :up}})
           "a" -> send(game, {:input, id, {:move, :left}})

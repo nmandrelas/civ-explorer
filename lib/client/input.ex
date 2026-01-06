@@ -4,13 +4,19 @@ defmodule Client.Input do
   end
 
   defp loop(socket) do
-    case IO.getn(:stdio, "", 1) do
-      nil ->
+    case IO.gets("") do
+      {:error, _} ->
         :ok
 
-      key ->
-        :gen_tcp.send(socket, key <> "\n")
+      line ->
+        trimmed = String.trim(line)
+
+        if trimmed in ~w(w a s d) do
+          :gen_tcp.send(socket, trimmed)
+        end
+
         loop(socket)
     end
   end
 end
+

@@ -6,7 +6,7 @@ defmodule CivExplore do
   end
 
   def run_client do
-    {:ok, socket} = :gen_tcp.connect(~c"localhost", 4000, [:binary, packet: 4])
+    {:ok, socket} = :gen_tcp.connect(~c"localhost", 4000, [:binary, packet: 4, active: true])
     Client.Network.start(socket)
     Client.Input.start(socket)
     Process.sleep(:infinity)

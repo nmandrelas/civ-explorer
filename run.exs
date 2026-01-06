@@ -1,1 +1,1 @@
-CivExplore.run()
+CivExplore.run_server()
