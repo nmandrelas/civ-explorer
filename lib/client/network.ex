@@ -4,6 +4,8 @@ defmodule Client.Network do
   end
 
   defp loop(socket) do
+    IO.inspect("Waiting for tcp msg")
+
     receive do
       {:tcp, ^socket, data} ->
         world = :erlang.binary_to_term(data)

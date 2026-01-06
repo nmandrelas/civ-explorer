@@ -8,7 +8,9 @@ defmodule Server.Listener do
 
   defp accept_loop(socket, game) do
     {:ok, client} = :gen_tcp.accept(socket)
-    Server.ClientSession.start(client, game)
+    pid = Server.ClientSession.start(client, game)
+    :gen_tcp.controlling_process(client, pid)
+    :inet.setopts(client, active: true)
     accept_loop(socket, game)
   end
 end

@@ -21,9 +21,8 @@ defmodule Server.ClientSession do
 
   # ---- PHASE 2: normal operation ----
   defp active(socket, game, id) do
-    case :gen_tcp.recv(socket, 0) do
-      {:ok, data} ->
-        # data is now the exact message (e.g. "w\n" or "s\n")
+    receive do
+      {:tcp, ^socket, data} ->
         case String.trim(data) do
           "w" -> send(game, {:input, id, {:move, :up}})
           "a" -> send(game, {:input, id, {:move, :left}})
@@ -31,12 +30,21 @@ defmodule Server.ClientSession do
           "d" -> send(game, {:input, id, {:move, :right}})
           _ -> :ok
         end
-
+  
         active(socket, game, id)
-
-      {:error, _} ->
+  
+      {:tcp_closed, ^socket} ->
         send(game, {:disconnect, id})
         :gen_tcp.close(socket)
+  
+      {:world, world} ->
+        send_world(socket, world)
+        active(socket, game, id)
+  
+      {:welcome, id2, world2} when id2 == id ->
+        # In case welcome arrives late; respond similarly to startup
+        send_world(socket, world2)
+        active(socket, game, id)
     end
   end
 
