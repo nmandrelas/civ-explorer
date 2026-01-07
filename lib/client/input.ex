@@ -1,22 +1,22 @@
 defmodule Client.Input do
   def start(socket) do
-    spawn_link(fn -> loop(socket) end)
+    spawn_link(fn ->
+      :ok = :shell.start_interactive({:noshell, :raw})
+      loop(socket)
+    end)
   end
 
   defp loop(socket) do
-    case IO.gets("") do
-      {:error, _} ->
+    case IO.read(:stdio, 1) do
+      :eof ->
         :ok
 
-      line ->
-        trimmed = String.trim(line)
-
-        if trimmed in ~w(w a s d) do
-          :gen_tcp.send(socket, trimmed)
+      char ->
+        if char in ~w(w a s d) do
+          :gen_tcp.send(socket, char)
         end
 
         loop(socket)
     end
   end
 end
-

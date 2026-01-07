@@ -1,16 +1,17 @@
 defmodule Client.Network do
   def start(socket) do
-    spawn_link(fn -> loop(socket) end)
+    renderer_pid = Engine.RenderLoop.start()
+    spawn_link(fn -> loop(socket, renderer_pid) end)
   end
 
-  defp loop(socket) do
-    IO.inspect("Waiting for tcp msg")
+  defp loop(socket, renderer_pid) do
+    # IO.inspect("Waiting for tcp msg")
 
     receive do
       {:tcp, ^socket, data} ->
         world = :erlang.binary_to_term(data)
-        Client.Renderer.render(world)
-        loop(socket)
+        send(renderer_pid, {:world, world})
+        loop(socket, renderer_pid)
 
       {:tcp_closed, ^socket} ->
         IO.puts("Server closed connection")
@@ -22,4 +23,3 @@ defmodule Client.Network do
     end
   end
 end
-

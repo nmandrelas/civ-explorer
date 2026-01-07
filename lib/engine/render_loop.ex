@@ -1,5 +1,5 @@
 defmodule Engine.RenderLoop do
-  alias Game.Renderer
+  alias Client.Renderer
 
   def start do
     spawn_link(fn ->

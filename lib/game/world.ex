@@ -1,12 +1,19 @@
 defmodule Game.World do
-  defstruct players: %{}
+  alias Game.NPC
+  defstruct npcs: [], players: %{}
 
   def new do
-    %__MODULE__{}
+    npcs = [
+      %NPC{x: 8, y: 8, race: "human", symbol: "H"},
+      %NPC{x: 6, y: 6, race: "goblin", symbol: "g"},
+      %NPC{x: 8, y: 4, race: "orc"}
+    ]
+
+    %Game.World{npcs: npcs, players: %{}}
   end
 
   def add_player(world, id) do
-    put_in(world.players[id], %{x: 0, y: 0})
+    put_in(world.players[id], %{x: 0, y: 0, symbol: "P", id: id})
   end
 
   def move_player(world, id, dir) do

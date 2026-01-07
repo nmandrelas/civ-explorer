@@ -7,6 +7,7 @@ defmodule CivExplore do
 
   def run_client do
     {:ok, socket} = :gen_tcp.connect(~c"localhost", 4010, [:binary, packet: 4, active: false])
+    :ok = :shell.start_interactive({:noshell, :raw})
 
     net_pid = Client.Network.start(socket)
     :gen_tcp.controlling_process(socket, net_pid)
