@@ -16,13 +16,14 @@ defmodule GameServer do
         loop(world, clients)
 
       {:input, id, {:move, dir}} ->
-        IO.inspect(dir)
         world = World.move_player(world, id, dir)
         broadcast(world, clients)
         loop(world, clients)
 
       {:disconnect, id} ->
         clients = Map.delete(clients, id)
+        world = World.remove_player(world, id)
+        broadcast(world, clients)
         loop(world, clients)
     end
   end

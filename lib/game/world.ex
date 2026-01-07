@@ -16,6 +16,10 @@ defmodule Game.World do
     put_in(world.players[id], %{x: 0, y: 0, symbol: "P", id: id})
   end
 
+  def remove_player(world, id) do
+    %{world | players: Map.delete(world.players, id)}
+  end
+
   def move_player(world, id, dir) do
     update_in(world.players[id], fn p ->
       case dir do

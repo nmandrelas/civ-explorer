@@ -24,11 +24,11 @@ defmodule Client.Renderer do
   defp get_symbol(npcs, x, y) do
     case Enum.find(npcs, fn c -> c.x == x && c.y == y end) do
       nil ->
-        "?"
+        ""
 
       character ->
         if character.symbol == nil do
-          "?"
+          "#{IO.ANSI.green()}?#{IO.ANSI.reset()}"
         else
           character.symbol
         end
