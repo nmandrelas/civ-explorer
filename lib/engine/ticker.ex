@@ -1,5 +1,5 @@
 defmodule Engine.Ticker do
-  @tick_ms 500
+  @tick_ms 1000
 
   def start(game_pid) do
     spawn_link(fn -> loop(game_pid) end)

@@ -1,5 +1,7 @@
 defmodule Game.World do
   alias Game.NPC
+  alias Configs.Static
+
   defstruct npcs: [], players: %{}
 
   def new do
@@ -20,14 +22,33 @@ defmodule Game.World do
     %{world | players: Map.delete(world.players, id)}
   end
 
+  def tick(world) do
+    moved_npcs =
+      world.npcs
+      |> Enum.map(fn npc ->
+        npc |> NPC.random_move() |> clamp()
+      end)
+
+    %{world | npcs: moved_npcs}
+  end
+
+  defp clamp(%NPC{x: x, y: y} = npc) do
+    %NPC{
+      npc
+      | x: clamp_value(x, 0, Static.width() - 1),
+        y: clamp_value(y, 0, Static.height() - 1)
+    }
+  end
+
+  defp clamp_value(value, min, max) do
+    value
+    |> max(min)
+    |> min(max)
+  end
+
   def move_player(world, id, dir) do
     update_in(world.players[id], fn p ->
-      case dir do
-        :up -> %{p | y: p.y - 1}
-        :down -> %{p | y: p.y + 1}
-        :left -> %{p | x: p.x - 1}
-        :right -> %{p | x: p.x + 1}
-      end
+      Game.Movement.move(p, dir)
     end)
   end
 end

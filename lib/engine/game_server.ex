@@ -2,7 +2,9 @@ defmodule GameServer do
   alias Game.World
 
   def start do
-    spawn_link(fn -> loop(World.new(), %{}) end)
+    game_server_pid = spawn_link(fn -> loop(World.new(), %{}) end)
+    Engine.Ticker.start(game_server_pid)
+    game_server_pid
   end
 
   defp loop(world, clients) do
@@ -17,6 +19,11 @@ defmodule GameServer do
 
       {:input, id, {:move, dir}} ->
         world = World.move_player(world, id, dir)
+        broadcast(world, clients)
+        loop(world, clients)
+
+      :tick ->
+        world = World.tick(world)
         broadcast(world, clients)
         loop(world, clients)
 
