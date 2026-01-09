@@ -3,6 +3,7 @@
 ### Run commands 
 
 mix run -e "CivExplore.run_server()"
+
 mix run -e "CivExplore.run_client()"
 
 ## Description
