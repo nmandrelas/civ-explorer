@@ -1,4 +1,4 @@
-defmodule Game.World do
+defmodule Game.Tile do
   alias Game.NPC
   alias Configs.Static
 
@@ -11,25 +11,25 @@ defmodule Game.World do
       %NPC{x: 8, y: 4, race: "orc"}
     ]
 
-    %Game.World{npcs: npcs, players: %{}}
+    %Game.Tile{npcs: npcs, players: %{}}
   end
 
-  def add_player(world, id) do
-    put_in(world.players[id], %{x: 0, y: 0, symbol: "P", id: id})
+  def add_player(tile, id) do
+    put_in(tile.players[id], %{x: 0, y: 0, symbol: "P", id: id})
   end
 
-  def remove_player(world, id) do
-    %{world | players: Map.delete(world.players, id)}
+  def remove_player(tile, id) do
+    %{tile | players: Map.delete(tile.players, id)}
   end
 
-  def tick(world) do
+  def tick(tile) do
     moved_npcs =
-      world.npcs
+      tile.npcs
       |> Enum.map(fn npc ->
         npc |> NPC.random_move() |> clamp()
       end)
 
-    %{world | npcs: moved_npcs}
+    %{tile | npcs: moved_npcs}
   end
 
   defp clamp(%NPC{x: x, y: y} = npc) do
@@ -46,8 +46,8 @@ defmodule Game.World do
     |> min(max)
   end
 
-  def move_player(world, id, dir) do
-    update_in(world.players[id], fn p ->
+  def move_player(tile, id, dir) do
+    update_in(tile.players[id], fn p ->
       Game.Movement.move(p, dir)
     end)
   end

@@ -1,8 +1,8 @@
 defmodule GameServer do
-  alias Game.World
+  alias Game.Tile
 
   def start do
-    game_server_pid = spawn_link(fn -> loop(World.new(), %{}) end)
+    game_server_pid = spawn_link(fn -> loop(Tile.new(), %{}) end)
     Engine.Ticker.start(game_server_pid)
     game_server_pid
   end
@@ -11,25 +11,25 @@ defmodule GameServer do
     receive do
       {:join, client_pid} ->
         id = make_ref()
-        world = World.add_player(world, id)
+        world = Tile.add_player(world, id)
         clients = Map.put(clients, id, client_pid)
         send(client_pid, {:welcome, id, world})
         broadcast(world, clients)
         loop(world, clients)
 
       {:input, id, {:move, dir}} ->
-        world = World.move_player(world, id, dir)
+        world = Tile.move_player(world, id, dir)
         broadcast(world, clients)
         loop(world, clients)
 
       :tick ->
-        world = World.tick(world)
+        world = Tile.tick(world)
         broadcast(world, clients)
         loop(world, clients)
 
       {:disconnect, id} ->
         clients = Map.delete(clients, id)
-        world = World.remove_player(world, id)
+        world = Tile.remove_player(world, id)
         broadcast(world, clients)
         loop(world, clients)
     end
